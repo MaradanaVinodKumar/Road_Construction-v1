@@ -1,0 +1,158 @@
+/* Gallery Title */
+
+/* Button Group */
+.ButtonGroup {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-family: Urbanist;
+}
+
+.ButtonGroup .btn {
+  margin-right: 10px;
+  font-family: Urbanist;
+}
+
+/* Month Buttons */
+.scrollable-months {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 300px; /* Adjust height as needed */
+  overflow-y: auto;
+}
+
+.scrollable-months .btn {
+  width: calc(50% - 5px);
+  margin-bottom: 5px;
+  font-family: Urbanist;
+}
+
+/* Image Cards */
+.Card {
+  margin-bottom: 20px;
+  font-family: Urbanist;
+}
+
+.GalleryCol{
+  padding-right: 7%;
+  
+}
+
+#bday-month{
+  background: rgb(255, 255, 255); 
+  color: #000000; /* Change text color */
+  border: 0px solid #000; /* Change border */
+ /* Add any other styles you want to customize */
+  width: 100%;
+  padding: 6px;
+  text-align: center;
+
+  color: var(--Brand-color, #EA6A06);
+  font-family: Urbanist;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%; /* 36.4px */
+  letter-spacing: 0.56px;
+
+  border-top: 0.5px solid #D1D1D1;
+
+ 
+  outline: none;
+  background-color: #ffffff;
+}
+.SelcetMonth{
+  color: #B4B0B0;
+  font-family: Urbanist;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%; /* 41.6px */
+  letter-spacing: 0.64px;
+ 
+}
+.datePicker{
+  border: 1px solid ;
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+  overflow: hidden;
+  border-radius: 20px;
+  background-color: rgb(253, 251, 245);
+
+  border: 0.5px solid #D1D1D1;
+  position: relative;
+}
+
+#bday-month::-webkit-calendar-picker-indicator {
+  border: 0px solid;
+  width: 100%;
+  background-color: transparent;
+  position: absolute;
+  cursor: pointer;
+}
+
+.GalleryHeader{
+  border-bottom: 1px solid #D6D6D6;
+  margin-bottom: 36px;
+  padding-bottom: 20px;
+}
+
+.GalleryHeaderText{
+  color: #1A1A1A;
+
+  font-family: Urbanist;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 130%; /* 41.6px */
+  letter-spacing: 0.64px;
+}
+.imageCard{
+  height: 300px;
+  position: relative;
+}
+.imageCardImg{
+  height: 100%;
+  border: 0px solid; 
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+}
+
+.LoadingBg{
+  border: 0px solid;
+  height: 600px;
+  text-align: center;
+  
+}
+
+.Loading{
+  border: 0px solid;
+  height: 100px;
+  width: 100px;
+
+  /* padding: 10%; */
+}
+
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .scrollable-months .btn {
+    width: 100%;
+  }
+  .GalleryCol{
+    padding-right: 2%;
+    
+  }
+  .SelcetMonth{
+    font-size: 15px;
+  }
+  #bday-month{
+    font-size: 15px;
+  }
+  .GalleryHeaderText{
+    font-size: 25px;
+  }
+}

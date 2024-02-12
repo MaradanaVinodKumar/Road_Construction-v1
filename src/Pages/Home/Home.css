@@ -1,0 +1,157 @@
+/* Home.css */
+.image {
+  width: 100%;
+  height: auto;
+  z-index: 1;
+  margin-top: -96px;
+}
+.welcome {
+  color: #fff;
+  font-family: Urbanist;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 550;
+  line-height: 130%; /* 39px */
+  letter-spacing: 0.6px;
+  text-align: justify;
+}
+.heading {
+  color: #fff;
+  text-align: justify;
+  font-family: Urbanist;
+  font-size: 72px;
+  font-style: normal;
+  font-weight: 550;
+  line-height: 130%; /* 93.6px */
+  letter-spacing: 1.44px;
+}
+.projectName {
+  color: #1a1a1a;
+  font-family: Urbanist;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 46.8px */
+  letter-spacing: 0.72px;
+}
+.para {
+  color: #434343;
+  font-family: Urbanist;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 36px */
+  letter-spacing: 0.48px;
+  width: "40%";
+}
+.about {
+  color:#EA6A06;
+  font-family: Urbanist;
+  font-size: 60px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 78px */
+  letter-spacing: 1.2px;
+}
+.navlink {
+  text-decoration: none !important;
+}
+
+.sub_text {
+  color: #434343;
+  font-family: Urbanist;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 36px */
+  letter-spacing: 0.48px;
+}
+.gallery_btn {
+  display: block;
+  padding: 24px 48px 26px 48px;
+  justify-content: flex-start; 
+  border-radius: 60px;
+  background:#EA6A06;
+  color: #fff;
+  font-family: Urbanist;
+  font-size: 24px;
+  margin-top: 20px;
+  font-weight: 600;
+  line-height: 130%; /* 31.2px */
+  letter-spacing: 0.48px;
+  text-decoration: none !important;
+}
+.gallery_btn:hover{
+  background:#EA6A06;
+}
+.text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 2;
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    padding: 10px;
+  }
+
+  .logo {
+    max-width: 80px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links ul {
+    margin-top: 20px;
+    flex-direction: column;
+  }
+
+  .nav-links li {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .content {
+    padding-top: 80px; /* Adjust padding */
+  }
+
+  .text-overlay {
+    top: 40%; /* Adjust vertical position */
+  }
+
+  .welcome {
+    font-size: 18px; /* Adjust font size */
+  }
+
+  .heading {
+    font-size: 36px; /* Adjust font size */
+  }
+
+  .about {
+    font-size: 24px; /* Adjust font size */
+  }
+
+  .projectName {
+    font-size: 18px; /* Adjust font size */
+  }
+
+  .para {
+    font-size: 14px; /* Adjust font size */
+  }
+
+  .sub_text {
+    font-size: 14px; /* Adjust font size */
+  }
+
+  .gallery_btn {
+    font-size: 16px; /* Adjust font size */
+    padding: 10px 20px 12px 20px; /* Adjust button padding */
+  }
+}
