@@ -67,8 +67,6 @@ const AdminPage = (props) => {
   //
 
 
-  var fileUploadingCount = 0;
-
   const uploadCompressed = () => {
     fileUploadingCount = 0;
     if (getFiles.length !== 0) {
@@ -79,7 +77,7 @@ const AdminPage = (props) => {
         const imageref = ref(imageDb, `${date.getFullYear()}/${monthName[date.getMonth()]}/${date + "-" + v4()}`);
         let uploadTask = uploadBytes(imageref, image).then((res) => {
 
-          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); }, 100);
+          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); if(getprogress>95){ /*show alert card for successfylly uploaded*/ } }, 100);
         })
       })
       // alert("image uploaded")
@@ -87,19 +85,6 @@ const AdminPage = (props) => {
     }
   }
 
-
-  const UploadingProcess = () => {
-    console.log(v4())
-
-    if (getFiles.length === fileUploadingCount) {
-
-      alert("uploaded")
-      // setProgress(0)
-    }
-
-    fileUploadingCount++;
-    // setProgress(getprogress + 1);
-  }
 
 
 
@@ -145,7 +130,7 @@ const AdminPage = (props) => {
 
 
     if (uploadedFiles.length !== 0) {
-      setTimeout(() => { setSelectedFiles(false); console.log(getFiles); }, 100);
+      setTimeout(() => { setSelectedFiles(false); console.log(getFiles);  }, 100);
 
     }
   };
