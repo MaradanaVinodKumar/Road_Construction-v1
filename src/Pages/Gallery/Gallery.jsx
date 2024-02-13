@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Button, ButtonGroup, Card, Container } from "react-bootstrap";
+import React, { useState } from "react";
+import { Row, Col, Container } from "react-bootstrap";
 import "./Gallery.css";
 import Footer from "../../Components/Footer/Footer";
 import MonthWiseImages from "../../Components/Gallery/MonthWiseImages";
 
 
-var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-let monthFullName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 
 function getNextMonth(prevDate) {
   console.log(prevDate)

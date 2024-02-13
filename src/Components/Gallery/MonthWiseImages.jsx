@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { imageDb } from "../../config/config";
-import { listAll, getDownloadURL, ref } from "firebase/storage";
+import { listAll, getDownloadURL, ref, deleteObject } from "firebase/storage";
 import Loading from "../../assets/Loading.gif"
 import emptyGallery from "../../assets/empty Gallery.jpg"
-import { Row, Col, Button, ButtonGroup, Card, Container } from "react-bootstrap";
+import { Row, Col, Card, Alert } from "react-bootstrap";
+import edit from "../../assets/edit.png"
+import editActive from "../../assets/editActive.png"
+import { v4 } from "uuid"
 
 var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 let monthFullName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -42,19 +45,47 @@ async function converToUrl(item) {
     return url;
 }
 
-function MonthWiseImages({ FormatedDate, onSelect }) {
+function MonthWiseImages({ FormatedDate, onSelect, EditButton = false }) {
 
     const [isLoading, setLoading] = useState(false);
     const [getImagesFromFireBase, setImagesFromFireBase] = useState([]);
     const [getSelectedDate, setSelectedDate] = useState(FormatedDate);
     const [viewMoreVisiblity, setViewMoreVisiblity] = useState(true);
+    const [editButtonClicked, setEditButtonClick] = useState(false);
+    const [editBttonShow] = useState(EditButton);
+    const [reload, setReload] = useState(false);
+
+    const DeleteImage = (path) => {
+
+        var conf = ("do you want to delete!")
+        if (conf) {
+            const deleteRef = ref(imageDb, path);
+            deleteObject(deleteRef).then((res) => {
+                console.log(res);
+                alert("image deleted !" + res);
+                setReload(true);
+                setViewMoreVisiblity(false);
+            })
+                .catch((error) => {
+                    console.log(error);
+                })
+        }
+    }
 
 
     useEffect(() => {
         // This code will run when the component is mounted
         // window.scrollTo(0, 0); // Reset scroll position to the top
         setSelectedDate(FormatedDate);
-        setViewMoreVisiblity(true);
+        if (reload) {
+            setViewMoreVisiblity(false);
+            setReload(false);
+        }
+        else {
+            setViewMoreVisiblity(true);
+        }
+
+
         setLoading(false)
         var index = 0;
         var arrayOfImagesData = [];
@@ -83,12 +114,15 @@ function MonthWiseImages({ FormatedDate, onSelect }) {
 
             })
 
-    }, [getSelectedDate, FormatedDate]);
+
+
+    }, [getSelectedDate, FormatedDate, reload]);
     return (
         <>
             <Col className="GalleryHeader">
                 {/* {monthFullName[getMonth]} */}
                 <span className="GalleryHeaderText">{monthFullName[parseInt(getSelectedDate.slice(5)) - 1] + " - " + getSelectedDate.slice(0, 4)}</span>
+                {editBttonShow && <span style={{ float: 'right' }}><button onClick={() => { setEditButtonClick(!editButtonClicked) }} className={` ${editButtonClicked ? "EditButtonActive" : "EditButton"}`}>Edit <img src={!editButtonClicked ? edit : editActive}></img></button></span>}
             </Col>
             <Row>
                 {isLoading ?
@@ -96,9 +130,13 @@ function MonthWiseImages({ FormatedDate, onSelect }) {
                         (
                             (getImagesFromFireBase.length) ? (
                                 getImagesFromFireBase.map((imageData) => (
-                                    <Col key={imageData.item._location.path_.slice(13, 25)} sm={6} md={4} lg={3}>
+                                    <Col key={v4()} sm={6} md={4} lg={3}>
                                         <Card className="mb-3 imageCard" >
+
                                             <Card.Img variant="top" className="imageCardImg" style={{ backgroundImage: `url("${imageData.url}")` }} />
+                                            <Card.ImgOverlay>
+                                                <div style={{ marginTop: 2, textAlign: "center", display: !editButtonClicked && "none" }}> <span className="deleteButton" onClick={() => { DeleteImage(imageData.item) }} >╳</span></div>
+                                            </Card.ImgOverlay>
                                             <Card.Body  >
                                                 <Card.Text style={{ fontFamily: "Urbanist" }}>
                                                     Date: {imageData.item._location.path_.slice(13, 25)}

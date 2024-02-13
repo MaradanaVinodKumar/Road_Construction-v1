@@ -1,181 +1,236 @@
 import React, { useState, useEffect } from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Import CSS for DatePicker
 import {
   Row,
   Col,
-  Button,
-  ButtonGroup,
-  Card,
   Container,
 } from "react-bootstrap";
-import imagesData from "./imagesData"; // Import your images data
+
 import "./AdminPage.css";
+import "./scroll_bar.css";
 import upload from "../../assets/upload.png";
 import Footer from "../../Components/Footer/Footer";
+import Compressor from "compressorjs";
+import uploadSym from "../../assets/uploadSym.png"
+import MonthWiseImages from "../../Components/Gallery/MonthWiseImages";
+import { imageDb } from "../../config/config";
+import { v4 } from "uuid";
+import { uploadBytes, ref } from "firebase/storage";
+import loading from "../../assets/Loading.gif"
 
-const AdminPage = () => {
+var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function getNextMonth(prevDate) {
+  console.log(prevDate)
+  var preDate = new Date(prevDate + "-30");
+  if (preDate.getMonth() - 1 >= 0) {
+    console.log((preDate.getMonth() - 1), preDate.getFullYear());
+    return ((preDate.getFullYear()) + "-" + (preDate.getMonth() - 1));
+  }
+  else {
+    console.log((preDate.getMonth() + 11), preDate.getFullYear() - 1);
+    return ((preDate.getFullYear() - 1) + "-" + (preDate.getMonth() + 12));
+  }
+
+}
+
+const AdminPage = (props) => {
   useEffect(() => {
     // This code will run when the component is mounted
     window.scrollTo(0, 0); // Reset scroll position to the top
   }, []);
-  const [selectedYear, setSelectedYear] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [files, setFiles] = useState([]); // For file upload
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
+  const formattedDate = `${year}-${month}`;
+  const [getFiles, setFiles] = useState([]); // For file upload
+  const [selectedFiles, setSelectedFiles] = useState(true);
+  const [getprogress, setProgress] = useState(0);
+  //
+  const [getSelectedDate, setSelectedDate] = useState(formattedDate);
+  const [getFormatedDates, setFormatedDates] = useState([formattedDate]);
+  const [MonthsCount, setMonthsCount] = useState(0);
 
-  // Get unique years from imagesData
-  const years = [
-    ...new Set(imagesData.map((image) => new Date(image.date).getFullYear())),
-  ];
+  const viewMore = () => {
+    console.log("clicked");
+    console.log(getNextMonth(getFormatedDates[MonthsCount]));
+    setFormatedDates(prevDates => [...prevDates, getNextMonth(getFormatedDates[MonthsCount])]);
+    setMonthsCount(MonthsCount + 1);
 
-  // Filter images by year
-  const filteredImagesByYear =
-    selectedYear !== null
-      ? imagesData.filter(
-          (image) =>
-            selectedYear === "All Years" ||
-            new Date(image.date).getFullYear() === selectedYear
-        )
-      : imagesData;
+  }
 
-  // Get unique months for the selected year
-  const months =
-    selectedYear !== null
-      ? Array.from(
-          new Set(
-            filteredImagesByYear.map((image) => new Date(image.date).getMonth())
-          )
-        ).sort((a, b) => a - b)
-      : [];
+  const ChangesDate = (e) => {
+    setSelectedDate(e.target.value);
 
-  // Filter images by year and month
-  const filteredImages =
-    selectedMonth !== null
-      ? filteredImagesByYear.filter(
-          (image) => new Date(image.date).getMonth() === selectedMonth
-        )
-      : filteredImagesByYear;
+    setFormatedDates((preDate) => [e.target.value]);
+    setMonthsCount(0);
+  }
+  //
+
+
+  var fileUploadingCount = 0;
+
+  const uploadCompressed = () => {
+    fileUploadingCount = 0;
+    if (getFiles.length !== 0) {
+      setProgress(0);
+      var progressPersentage = 100 / getFiles.length;
+      var date = new Date(getSelectedDate);
+      getFiles.forEach((image) => {
+        const imageref = ref(imageDb, `${date.getFullYear()}/${monthName[date.getMonth()]}/${date + "-" + v4()}`);
+        let uploadTask = uploadBytes(imageref, image).then((res) => {
+
+          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); }, 100);
+        })
+      })
+      // alert("image uploaded")
+      console.log(getFiles);
+    }
+  }
+
+
+  const UploadingProcess = () => {
+    console.log(v4())
+
+    if (getFiles.length === fileUploadingCount) {
+
+      alert("uploaded")
+      // setProgress(0)
+    }
+
+    fileUploadingCount++;
+    // setProgress(getprogress + 1);
+  }
+
+
+
+
+  const deleteFile = (index) => {
+
+    var arrayFiles = getFiles;
+    arrayFiles = arrayFiles.filter((value, ind) => {
+      if (index !== ind) {
+        return value;
+      }
+    })
+
+    setFiles([...arrayFiles]);
+    if (arrayFiles.length === 0) {
+      setSelectedFiles(true);
+    }
+  }
 
   // Function to handle file upload
   const handleFileUpload = (event) => {
     const uploadedFiles = event.target.files;
-    const selectedFiles = [...uploadedFiles].map((file) => ({
-      ...file,
-      year: selectedYear,
-      month: selectedMonth,
-    }));
-    setFiles([...files, ...selectedFiles]);
+    setFiles([]);
+    console.log(uploadedFiles);
+    for (let fileObj of uploadedFiles) {
+      console.log(fileObj.size);
+      if (fileObj.size > 10000000) {
+        new Compressor(fileObj, {
+          quality: 0.8, // 0.6 can also be used, but its not recommended to go below.
+          success: (compressedResult) => {
+            // compressedResult has the compressed file.
+            // Use the compressed file to upload the images to your server. 
+            setFiles(file => [...file, compressedResult]);
+            console.log(compressedResult);
+            // setCompressedFile(res)
+          },
+        });
+      }
+      else {
+        setFiles(file => [...file, fileObj]);
+      }
+    }
+
+
+    if (uploadedFiles.length !== 0) {
+      setTimeout(() => { setSelectedFiles(false); console.log(getFiles); }, 100);
+
+    }
   };
 
   return (
     <>
       <Container fluid>
-        <Row>
-          <Col md={2}>
-            {/* Year Filter */}
-            <ButtonGroup vertical className="mb-3">
-              <Button
-                onClick={() => setSelectedYear("All Years")}
-                variant={selectedYear === "All Years" ? "primary" : "secondary"}
-              >
-                All Years
-              </Button>
-              {years.map((year) => (
-                <Button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  variant={selectedYear === year ? "primary" : "secondary"}
-                >
-                  {year}
-                </Button>
-              ))}
-            </ButtonGroup>
-            {/* Month Filter */}
-            {selectedYear !== null && selectedYear !== "All Years" && (
-              <div className="scrollable-months">
-                {months.map((month) => (
-                  <Button
-                    key={month}
-                    onClick={() => setSelectedMonth(month)}
-                    variant={selectedMonth === month ? "primary" : "secondary"}
-                  >
-                    {new Date(2000, month).toLocaleString("en-US", {
-                      month: "long",
-                    })}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </Col>
-          <Col md={9}>
-            {/* Drag and drop container */}
-            
-            <div className="upload-container">
-              <div className="dashed-container">
-                <DatePicker
-                  selected={
-                    selectedYear !== null ? new Date(selectedYear, 0) : null
-                  }
-                  onChange={(date) => setSelectedYear(date.getFullYear())}
-                  showYearPicker
-                  dateFormat="yyyy"
-                  placeholderText="Select Year"
-                />
-                {selectedYear && (
-                  <DatePicker
-                    selected={
-                      selectedMonth !== null
-                        ? new Date(selectedYear, selectedMonth)
-                        : null
-                    }
-                    onChange={(date) => setSelectedMonth(date.getMonth())}
-                    showMonthYearPicker
-                    dateFormat="MMMM yyyy"
-                    placeholderText="Select Month"
-                    minDate={new Date(selectedYear, 0)} // Set minDate to the beginning of the year
-                    maxDate={new Date(selectedYear, 11)} // Set maxDate to the end of the year
-                  />
-                )}
-                <div className="dashed-container-upload">
+        {/* Drag and drop container */}
+
+        <div className="upload-container">
+          <div className="dashed-container">
+            {
+
+              selectedFiles ?
+
+                (<div className="dashed-container-upload">
                   <label htmlFor="file-upload">
                     {/* Here we display the image */}
                     <img src={upload} alt="Upload Image" />
                   </label>
-
                   <input
                     type="file"
                     id="file-upload"
-                    onChange={handleFileUpload}
+                    onChange={(e) => { handleFileUpload(e) }}
                     multiple
-                    onClick={() =>
-                      document.getElementById("file-upload").click()
-                    }
+                    accept="image/*"
                   />
                   <div className="upload-text">
                     <p>Drag and drop files here or click to browse</p>
                   </div>
-                </div>
-              </div>
-            </div>
+                </div>)
+                :
+                (
+                  <div className="dashed-container-preview-bg">
+                    <Row className="dashed-container-preview-body">
 
+                      {
+                        getFiles.map((image, index) => {
+                          return (
+                            <Col sm={6} md={4} lg={3} key={index} style={{ backgroundImage: `url("${URL.createObjectURL(image)}")` }} className="PreviewImage">
+                              {/* // style={{ backgroundImage: `url("${URL.createObjectURL(image)}")` }} */}
+                              <div style={{ marginTop: 7, textAlign: "center" }}> <span className="deleteButton" onClick={() => { deleteFile(index) }} >╳</span></div>
+                            </Col>
+                          )
+                        })
+                      }
+
+                    </Row>
+                    <div className="dashed-container-Buttons" >
+
+                      <input type="date" className="dateForUpload" value={getSelectedDate} onChange={(e) => { ChangesDate(e) }} />
+                      <button className="uploadButton" onClick={() => { uploadCompressed() }}>  Upload <img src={uploadSym} alt="" /></button>
+
+
+                    </div>
+                  </div>
+                )
+            }
+            {
+              <div style={{ backgroundColor: 'black', height: 20, width: getprogress + "%" }}>{getprogress}</div>
+            }
+          </div>
+        </div>
+
+
+        <Row>
+          <Col md={3} className="mb-3" >
+
+            <Col className="datePicker">
+              <span className="SelcetMonth">Select Month</span><br />
+              <input id="bday-month" type="month" name="bday-month" value={getSelectedDate} min="2023-12" max={formattedDate} onChange={(e) => { ChangesDate(e); console.log(e.target.value); }} />
+            </Col>
+
+          </Col>
+          <Col md={9} className="GalleryCol">
             {/* Gallery */}
-            <Row>
-              {filteredImages.map((image) => (
-                <Col key={image.id} sm={6} md={4} lg={3}>
-                  <Card className="mb-3">
-                    <Card.Img variant="top" src={image.url} />
-                    <Card.Body>
-                      <Card.Title style={{ fontFamily: "Urbanist" }}>
-                        {image.title}
-                      </Card.Title>
-                      <Card.Text style={{ fontFamily: "Urbanist" }}>
-                        Date: {new Date(image.date).toLocaleDateString()}
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
+
+            {getFormatedDates.map((FormatedDate) => {
+              return (
+                <MonthWiseImages FormatedDate={FormatedDate} onSelect={() => { viewMore() }} EditButton={true} key={v4()} />
+              )
+            })
+
+            }
+
           </Col>
         </Row>
       </Container>
