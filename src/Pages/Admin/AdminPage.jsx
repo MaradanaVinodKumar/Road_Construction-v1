@@ -34,10 +34,6 @@ function getNextMonth(prevDate) {
 }
 
 const AdminPage = (props) => {
-  useEffect(() => {
-    // This code will run when the component is mounted
-    window.scrollTo(0, 0); // Reset scroll position to the top
-  }, []);
 
   const todayForUpload = new Date().toISOString().split('T')[0];
 
@@ -87,6 +83,8 @@ const AdminPage = (props) => {
 
   const uploadCompressed = () => {
 
+    setUploadDate(todayForUpload);
+
     if (getFiles.length !== 0) {
       setProgress(0);
       var progressPersentage = 100 / getFiles.length;
@@ -95,7 +93,7 @@ const AdminPage = (props) => {
         const imageref = ref(imageDb, `${date.getFullYear()}/${monthName[date.getMonth()]}/${date + "-" + v4()}`);
         let uploadTask = uploadBytes(imageref, image).then((res) => {
 
-          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); if (getprogress > 95) {  /*show alert card for successfylly uploaded*/ setSelectedFiles(true); setTimeout(() => { setProgress(0); }, 100) } }, 100);
+          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); if (getprogress > 90) {  /*show alert card for successfylly uploaded*/ setSelectedFiles(() => true); } }, 100);
         })
       })
       // alert("image uploaded")
@@ -188,7 +186,7 @@ const AdminPage = (props) => {
                       {
                         getFiles.map((image, index) => {
                           return (
-                            <Col sm={6} md={4} lg={3} key={index} style={{ backgroundImage: `url("${URL.createObjectURL(image)}")` }} className="PreviewImage">
+                            <Col sm={6} md={4} lg={3} key={v4()} style={{ backgroundImage: `url("${URL.createObjectURL(image)}")` }} className="PreviewImage">
                               {/* // style={{ backgroundImage: `url("${URL.createObjectURL(image)}")` }} */}
                               <div style={{ marginTop: 7, textAlign: "center" }}> <span className="deleteButton" onClick={() => { deleteFile(index) }} >╳</span></div>
                             </Col>
@@ -202,13 +200,14 @@ const AdminPage = (props) => {
                       <input type="date" className="dateForUpload" value={uploadDate} min='2023-12-01' max={todayForUpload} onChange={(e) => { UploadDateHandling(e) }} />
                       <button className="uploadButton" onClick={() => { uploadCompressed() }}>  Upload <img src={uploadSym} alt="" /></button>
 
-
                     </div>
                   </div>
                 )
             }
             {
-              <div style={{ color: 'white', backgroundColor: 'black', height: 20, width: getprogress + "%" }}>{getprogress}</div>
+              <div >
+                <div style={{ borderRadius: 20, color: 'white', backgroundColor: '#0c8501', height: 20, width: getprogress + "%" }}>{getprogress}</div>
+              </div>
             }
           </div>
         </div>

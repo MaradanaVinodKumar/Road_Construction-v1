@@ -20,7 +20,7 @@ function getNextMonth(prevDate) {
   }
 
 }
-
+let monthFullName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const Gallery = () => {
 
@@ -29,10 +29,13 @@ const Gallery = () => {
   const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
   const formattedDate = `${year}-${month}`;
 
-  console.log(formattedDate);
+  // console.log(monthFullName[today.getMonth()], monthFullName[11]);
   const [getSelectedDate, setSelectedDate] = useState(formattedDate);
   const [getFormatedDates, setFormatedDates] = useState([formattedDate]);
   const [MonthsCount, setMonthsCount] = useState(0);
+
+  const [MinDate] = useState({ year: 2023, month: monthFullName[11] })
+  const [MaxDate] = useState({ year: today.getFullYear(), month: monthFullName[today.getMonth()] })
 
   const viewMore = () => {
     console.log("clicked");
@@ -57,6 +60,12 @@ const Gallery = () => {
           <Col className="datePicker">
             <span className="SelcetMonth">Select Month</span><br />
             <input id="bday-month" type="month" name="bday-month" value={getSelectedDate} min="2023-12" max={formattedDate} onChange={(e) => { ChangesDate(e); console.log(e.target.value); }} />
+          </Col>
+
+          <Col className="datePicker" style={{ marginTop: 20 }}>
+            {
+
+            }
           </Col>
 
         </Col>

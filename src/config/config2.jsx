@@ -1,17 +1,11 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getStorage } from 'firebase/storage';
+import { getStorage } from "firebase/storage";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCnP3FHliLTt_Jf0pBI5dZ9qfQZh3dUr-M",
-    authDomain: "vinod-c848d.firebaseapp.com",
-    projectId: "vinod-c848d",
-    storageBucket: "vinod-c848d.appspot.com",
-    messagingSenderId: "947962151563",
-    appId: "1:947962151563:web:6917df042e209704d3ca8e"
-};
-
-
-const firebaseConfig2 = {
     apiKey: "AIzaSyCAGEXhRhKSha8P6ulJTl3q6E2nXsBoB38",
     authDomain: "kmvpl-254b9.firebaseapp.com",
     projectId: "kmvpl-254b9",
@@ -21,6 +15,5 @@ const firebaseConfig2 = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig2);
-
+const app = initializeApp(firebaseConfig);
 export const imageDb = getStorage(app);
