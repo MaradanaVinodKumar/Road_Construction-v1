@@ -77,15 +77,8 @@ function MonthWiseImages({ FormatedDate, onSelect, EditButton = false }) {
         // This code will run when the component is mounted
         // window.scrollTo(0, 0); // Reset scroll position to the top
         setSelectedDate(FormatedDate);
-        if (reload) {
-            setViewMoreVisiblity(false);
-            setReload(false);
-        }
-        else {
-            setViewMoreVisiblity(true);
-        }
 
-
+        setViewMoreVisiblity(true);
         setLoading(false)
         var index = 0;
         var arrayOfImagesData = [];
@@ -115,7 +108,7 @@ function MonthWiseImages({ FormatedDate, onSelect, EditButton = false }) {
             })
 
 
-
+        setReload(false);
     }, [getSelectedDate, FormatedDate, reload]);
     return (
         <>

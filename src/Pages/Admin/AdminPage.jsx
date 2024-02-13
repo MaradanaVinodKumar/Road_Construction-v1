@@ -38,13 +38,19 @@ const AdminPage = (props) => {
     // This code will run when the component is mounted
     window.scrollTo(0, 0); // Reset scroll position to the top
   }, []);
+
+  const todayForUpload = new Date().toISOString().split('T')[0];
+
   const today = new Date();
   const year = today.getFullYear();
   const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
   const formattedDate = `${year}-${month}`;
+
   const [getFiles, setFiles] = useState([]); // For file upload
   const [selectedFiles, setSelectedFiles] = useState(true);
   const [getprogress, setProgress] = useState(0);
+  const [uploadDate, setUploadDate] = useState(todayForUpload);
+
   //
   const [getSelectedDate, setSelectedDate] = useState(formattedDate);
   const [getFormatedDates, setFormatedDates] = useState([formattedDate]);
@@ -66,18 +72,30 @@ const AdminPage = (props) => {
   }
   //
 
+  const UploadDateHandling = (e) => {
+
+    setUploadDate(e.target.value);
+    const date = new Date(e.target.value);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
+    const formattedDate = `${year}-${month}`;
+    setSelectedDate(formattedDate);
+    setFormatedDates((preDate) => [formattedDate]);
+    setMonthsCount(0);
+  }
+
 
   const uploadCompressed = () => {
-    fileUploadingCount = 0;
+
     if (getFiles.length !== 0) {
       setProgress(0);
       var progressPersentage = 100 / getFiles.length;
-      var date = new Date(getSelectedDate);
+      var date = new Date(uploadDate);
       getFiles.forEach((image) => {
         const imageref = ref(imageDb, `${date.getFullYear()}/${monthName[date.getMonth()]}/${date + "-" + v4()}`);
         let uploadTask = uploadBytes(imageref, image).then((res) => {
 
-          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); if(getprogress>95){ /*show alert card for successfylly uploaded*/ } }, 100);
+          setTimeout(() => { setProgress((getprogress) => { return getprogress + progressPersentage }); if (getprogress > 95) {  /*show alert card for successfylly uploaded*/ setSelectedFiles(true); setTimeout(() => { setProgress(0); }, 100) } }, 100);
         })
       })
       // alert("image uploaded")
@@ -130,7 +148,7 @@ const AdminPage = (props) => {
 
 
     if (uploadedFiles.length !== 0) {
-      setTimeout(() => { setSelectedFiles(false); console.log(getFiles);  }, 100);
+      setTimeout(() => { setSelectedFiles(false); console.log(getFiles); }, 100);
 
     }
   };
@@ -181,7 +199,7 @@ const AdminPage = (props) => {
                     </Row>
                     <div className="dashed-container-Buttons" >
 
-                      <input type="date" className="dateForUpload" value={getSelectedDate} onChange={(e) => { ChangesDate(e) }} />
+                      <input type="date" className="dateForUpload" value={uploadDate} min='2023-12-01' max={todayForUpload} onChange={(e) => { UploadDateHandling(e) }} />
                       <button className="uploadButton" onClick={() => { uploadCompressed() }}>  Upload <img src={uploadSym} alt="" /></button>
 
 
@@ -190,7 +208,7 @@ const AdminPage = (props) => {
                 )
             }
             {
-              <div style={{ backgroundColor: 'black', height: 20, width: getprogress + "%" }}>{getprogress}</div>
+              <div style={{ color: 'white', backgroundColor: 'black', height: 20, width: getprogress + "%" }}>{getprogress}</div>
             }
           </div>
         </div>
